@@ -1,5 +1,8 @@
 var docRef = app.activeDocument;
+var docName = docRef.name.split('.')[0];
 
+var prefix;
+var suffix;
 var pdfArtboards = [];
 var jpgArtboards = [];
   
@@ -7,15 +10,13 @@ function exportPNG24(destFolder, artboard) {
 
     app.userInteractionLevel = UserInteractionLevel.DONTDISPLAYALERTS;
 
-    var fileName = docRef.name.split('.')[0];
-
     var opts = new ExportOptionsPNG24();
     opts.artBoardClipping = true;
     opts.transparency = false;
     
     
     docRef.artboards.setActiveArtboardIndex( artboard );
-    fileName = fileName + "_" + docRef.artboards[artboard].name + ".png";
+    var fileName = prefix.text + docRef.artboards[artboard].name + suffix.text + ".png";
     var fileSpec = File(destFolder + "/" + fileName);
     docRef.exportFile ( fileSpec, ExportType.PNG24, opts );
     
@@ -28,8 +29,7 @@ function exportPDF(destFolder, artboard) {
     pdfSaveOptions.artboardRange = artboard;
     pdfSaveOptions.pDFPreset = app.PDFPresetsList[3];
 
-    var fileName = docRef.name.split('.')[0];
-    fileName = fileName + "_" + docRef.artboards[artboard-1].name + ".pdf";
+    var fileName = prefix.text + docRef.artboards[artboard-1].name + suffix.text + ".pdf";
 
     var destFile = File(destFolder + "/" + fileName);
 	docRef.saveAs (destFile,  pdfSaveOptions);	 
@@ -65,21 +65,38 @@ function openDialog() {
     var jpgRow = dlg.add('group', undefined, '');
     jpgRow.oreintation = 'row';
         
-    pdfRow.add("statictext", undefined, "Save as PDF: ")
-    jpgRow.add("statictext", undefined, "Save as JPG: ")
+    pdfRow.add("statictext", undefined, "Save as PDF: ");
+    jpgRow.add("statictext", undefined, "Save as JPG: ");
 
     for(var i=0; i<docRef.artboards.length; i++){
 
-        var artboard = docRef.artboards[i];
+        var artboard = docRef.artboards[i].name;
 
-        var pdfCheck =  pdfRow.add("checkbox", undefined, artboard.name);
-        var jpgCheck = jpgRow.add("checkbox", undefined, artboard.name);
+        var pdfCheck =  pdfRow.add("checkbox", undefined, artboard);
+        if(artboard==="8.5x11" || artboard==="11x17" || artboard==="24x36"){
+            pdfCheck.value = true;
+        }
+
+        var jpgCheck = jpgRow.add("checkbox", undefined, artboard);
+        if(artboard==="1024x512" || artboard==="1140x325" || artboard==="1080x1920" || artboard==="1200x900"){
+            jpgCheck.value = true;
+        }
 
         pdfArtboards.push(pdfCheck);
         jpgArtboards.push(jpgCheck);
     }
 
-    
+    var ixRow = dlg.add('group', undefined, '');
+    ixRow.oreintation = 'row';
+
+    ixRow.add("statictext", undefined, "Prefix: ");
+    prefix = ixRow.add("edittext", undefined, docName + "_");
+    prefix.characters = 40;
+
+    ixRow.add("statictext", undefined, "Suffix: ");
+    suffix = ixRow.add("edittext");
+    suffix.characters = 20;
+
 
     //Buttons
     var buttonRow;
