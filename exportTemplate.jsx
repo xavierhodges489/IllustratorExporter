@@ -1,4 +1,7 @@
 var docRef = app.activeDocument;
+
+var pdfArtboards = [];
+var jpgArtboards = [];
   
 function exportPNG24(destFolder, artboard) {  
 
@@ -32,14 +35,68 @@ function exportPDF(destFolder, artboard) {
 	docRef.saveAs (destFile,  pdfSaveOptions);	 
 }
 
-var destFolder = Folder.selectDialog('Select the folder to save files to:');
-if (destFolder) {
-    
-    for ( ii = 1; ii < 4; ii++ ) {
-        exportPDF(destFolder, ii);	
+function save(){
+    var destFolder = Folder.selectDialog('Select the folder to save files to:');
+    if (destFolder) {
+
+        var ii;
+
+        for ( ii = 0; ii < pdfArtboards.length; ii++ ) {
+            if(pdfArtboards[ii].value==true){
+                exportPDF(destFolder, ii+1);
+            }
+        }
+
+        for ( ii = 0; ii < jpgArtboards.length; ii++ ) {
+            if(jpgArtboards[ii].value==true){
+                exportPNG24(destFolder, ii);
+            }
+        }
     }
-    
-    for ( ii = 3; ii < 6; ii++ ) {
-        exportPNG24(destFolder, ii);	
+}
+
+function openDialog() {
+
+    var dlg = new Window("dialog", "Artboard Exporter");
+
+    var pdfRow = dlg.add('group', undefined, '');
+    pdfRow.oreintation = 'row';
+
+    var jpgRow = dlg.add('group', undefined, '');
+    jpgRow.oreintation = 'row';
+        
+    pdfRow.add("statictext", undefined, "Save as PDF: ")
+    jpgRow.add("statictext", undefined, "Save as JPG: ")
+
+    for(var i=0; i<docRef.artboards.length; i++){
+
+        var artboard = docRef.artboards[i];
+
+        var pdfCheck =  pdfRow.add("checkbox", undefined, artboard.name);
+        var jpgCheck = jpgRow.add("checkbox", undefined, artboard.name);
+
+        pdfArtboards.push(pdfCheck);
+        jpgArtboards.push(jpgCheck);
     }
-}	
+
+    
+
+    //Buttons
+    var buttonRow;
+    buttonRow = dlg.add('group', undefined, ''); 
+    buttonRow.orientation = 'row';
+    
+    var cancelBtn = buttonRow.add('button', undefined, 'Cancel', {name:'cancel'});
+		cancelBtn.onClick = function() { dlg.close() };
+
+	var saveBtn = buttonRow.add('button', undefined, 'Save and Close', {name:'saveClose'});
+	saveBtn.onClick = function() {
+		save();
+		dlg.close()
+    };
+    
+    dlg.show();
+}
+
+openDialog();
+
