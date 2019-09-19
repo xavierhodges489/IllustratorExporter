@@ -1,11 +1,15 @@
 var docRef = app.activeDocument;
 var docName = docRef.name.split('.')[0];
+var destFolder = docRef.path;
 
 var prefix;
 var suffix;
 var pdfArtboards = [];
 var jpgArtboards = [];
 var names = [];
+
+var destFolderText;
+
   
 function exportPNG24(destFolder, name, artboard) {  
 
@@ -37,7 +41,6 @@ function exportPDF(destFolder, name, artboard) {
 }
 
 function save(){
-    var destFolder = Folder.selectDialog('Select the folder to save files to:');
     if (destFolder) {
 
         var ii;
@@ -57,6 +60,7 @@ function save(){
 }
 
 function openDialog() {
+    
 
     var dlg = new Window("dialog", "Artboard Exporter");
 
@@ -104,6 +108,17 @@ function openDialog() {
         names.push(name);
     }
 
+    checkColumn = checkRow.add('group', undefined, '');
+    var uncheckAllBtn = checkColumn.add('button', undefined, "Uncheck All", {name:'uncheckAll'});
+    uncheckAllBtn.onClick = function() {
+        var i;
+        for(i=0; i<pdfArtboards.length; i++){
+            pdfArtboards[i].value = false;
+            jpgArtboards[i].value = false;
+        }
+    };
+
+    //Prefix and suffix row
     var ixRow = dlg.add('group', undefined, '');
     ixRow.orientation = 'row';
     ixRow.alignment = 'left';
@@ -116,18 +131,32 @@ function openDialog() {
     suffix = ixRow.add("edittext");
     suffix.characters = 20;
 
+    //folder row
+    var folderRow = dlg.add('group', undefined, ''); 
+    folderRow.orientation = 'row';
+    folderRow.alignment = 'left';
 
+    folderRow.add("statictext", undefined, "Export to: ")
+    
+    destFolderText = folderRow.add("edittext", undefined, destFolder.fsName);
+    destFolderText.characters = 65;
+    
     //Buttons
-    var buttonRow;
-    buttonRow = dlg.add('group', undefined, ''); 
+    var buttonRow = dlg.add('group', undefined, ''); 
     buttonRow.orientation = 'row';
     buttonRow.alignment = 'right';
+
+    var selectFolderButton = buttonRow.add('button', undefined, "Choose Folder", {name:'selectFolderButton'});
+    selectFolderButton.onClick = function() { 
+        destFolder = destFolder.selectDlg('Select the folder to save files to:');
+        destFolderText.text = destFolder.fsName;
+     };
     
     var cancelBtn = buttonRow.add('button', undefined, 'Cancel', {name:'cancel'});
-		cancelBtn.onClick = function() { dlg.close() };
+	cancelBtn.onClick = function() { dlg.close() };
 
-	var saveBtn = buttonRow.add('button', undefined, 'Save and Close', {name:'saveClose'});
-	saveBtn.onClick = function() {
+	var exportBtn = buttonRow.add('button', undefined, 'Export', {name:'export'});
+	exportBtn.onClick = function() {
 		save();
 		dlg.close()
     };
