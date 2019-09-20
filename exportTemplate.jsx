@@ -77,7 +77,7 @@ function openDialog() {
     checkColumn.add("statictext", undefined, "Export as PDF: ").alignment = 'right';
     
     checkColumn.add("statictext", undefined, "Export as JPG: ").alignment = 'right';
-    
+
     checkColumn.add("statictext", undefined, "Name: ").alignment = 'right';
     
 
@@ -148,7 +148,10 @@ function openDialog() {
 
     var selectFolderButton = buttonRow.add('button', undefined, "Choose Folder", {name:'selectFolderButton'});
     selectFolderButton.onClick = function() { 
-        destFolder = destFolder.selectDlg('Select the folder to save files to:');
+        var selected = destFolder.selectDlg('Select the folder to save files to:');
+        if(selected){
+            destFolder = selected;
+        }
         destFolderText.text = destFolder.fsName;
      };
     
