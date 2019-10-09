@@ -1,5 +1,5 @@
 var docRef = app.activeDocument;
-var docName = docRef.name.split('.')[0];
+var docName = docRef.name.substring(0, docRef.name.lastIndexOf('.'));
 var destFolder = docRef.path;
 
 var prefix;
