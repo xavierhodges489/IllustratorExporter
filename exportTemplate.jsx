@@ -76,7 +76,7 @@ function openDialog() {
     
     checkColumn.add("statictext", undefined, "Export as PDF: ").alignment = 'right';
     
-    checkColumn.add("statictext", undefined, "Export as JPG: ").alignment = 'right';
+    checkColumn.add("statictext", undefined, "Export as PNG: ").alignment = 'right';
 
     checkColumn.add("statictext", undefined, "Name: ").alignment = 'right';
     
