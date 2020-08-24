@@ -91,12 +91,12 @@ function openDialog() {
         checkColumn.add("statictext", undefined, (i+1));
 
         var pdfCheck =  checkColumn.add("checkbox");
-        if(artboard==="8.5x11" || artboard==="11x17" || artboard==="24x36"){
+        if(artboard.indexOf("8.5x11") > -1 || artboard.indexOf("11x8.5") > -1 || artboard.indexOf("11x17") > -1 || artboard.indexOf("24x36") > -1){
             pdfCheck.value = true;
         }
 
         var jpgCheck = checkColumn.add("checkbox");
-        if(artboard==="1024x512" || artboard==="1140x325" || artboard==="1080x1920" || artboard==="1200x900"){
+        if(artboard.indexOf("1024x512") > -1 || artboard.indexOf("1140x325") > -1 || artboard.indexOf("1080x1920") > -1 || artboard.indexOf("1200x900") > -1){
             jpgCheck.value = true;
         }
 
